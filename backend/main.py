@@ -8,7 +8,10 @@ app = FastAPI(title="Log Analyzer API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://laudable-respect-production-f4f1.up.railway.app/",
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
