@@ -202,40 +202,7 @@ VITE_API_URL=http://localhost:8000
 
 ## 📁 Project Structure
 
-log-analyzer/
-├── 🐳 docker-compose.yml
-├── 📄 README.md
-│
-├── backend/
-│   ├── main.py          # FastAPI app entry point
-│   ├── database.py      # Database connection
-│   ├── models.py        # SQLAlchemy models
-│   ├── routers.py       # API endpoints
-│   ├── analyzer.py      # AI analysis engine
-│   ├── requirements.txt
-│   └── Dockerfile
-│
-└── frontend/
-├── src/
-│   ├── pages/
-│   │   ├── LandingPage.jsx
-│   │   ├── LoginPage.jsx
-│   │   ├── DashboardPage.jsx
-│   │   ├── AnalyzePage.jsx
-│   │   ├── HistoryPage.jsx
-│   │   └── AnalyticsPage.jsx
-│   ├── components/
-│   │   ├── AnalysisResult.jsx
-│   │   ├── StackTraceVisualizer.jsx
-│   │   ├── LogTimeline.jsx
-│   │   ├── LogChat.jsx
-│   │   ├── PatternDetection.jsx
-│   │   └── ...
-│   └── utils/
-│       ├── parseStackTrace.js
-│       └── parseTimestamps.js
-└── Dockerfile
-
+![Timeline](screenshots/folderstructure.png)
 ---
 
 ## 🌐 API Endpoints
