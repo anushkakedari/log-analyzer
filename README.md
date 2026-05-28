@@ -10,7 +10,7 @@
 
 **Stop googling your errors. Just paste them.**
 
-[🌐 Live Demo](https://your-vercel-url.vercel.app) 
+[🌐 Live Demo](https://log-analyzer-steel.vercel.app/) 
 [🐛 Report Bug](https://github.com/anushkakedari/log-analyzer/issues) 
 [💡 Request Feature](https://github.com/anushkakedari/log-analyzer/issues)
 
