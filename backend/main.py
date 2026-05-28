@@ -10,7 +10,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://laudable-respect-production-f4f1.up.railway.app/",
+        "https://laudable-respect-production-f4f1.up.railway.app",
+        "https://log-analyzer-steel.vercel.app",
         ],
     allow_credentials=True,
     allow_methods=["*"],
