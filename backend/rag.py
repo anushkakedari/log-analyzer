@@ -48,7 +48,7 @@ def store_embedding(log_id: str, log_text: str):
             'embedding': embedding
         }).eq('id', log_id).execute()
 
-        print(f"RAG: Supabase response: {response}")
+        print(f"RAG: Supabase response: {result}")
 
     except Exception as e:
         print(f"RAG: FAILED to store embedding: {type(e).__name__}: {e}")
