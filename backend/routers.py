@@ -5,6 +5,7 @@ from database import get_db
 from models import LogAnalysis
 from analyzer import analyze_log
 import json
+from rag import store_embedding
 
 router = APIRouter()
 
@@ -22,6 +23,8 @@ class AnalyzeResponse(BaseModel):
     fix_suggestions: list
     fix_code: str
     fix_confidence: int
+    is_personalized: bool = False   #last 2 lines added to build rag
+    similar_logs: list = []
 
 @router.post("/analyze", response_model=AnalyzeResponse)
 def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
@@ -32,7 +35,7 @@ def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Log text too long (max 10,000 characters)")
 
     try:
-        result = analyze_log(request.log_text)
+        result = analyze_log(request.log_text, request.user_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
 
@@ -51,6 +54,9 @@ def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(log_entry)
 
+    # Store embedding for RAG retrieval
+    store_embedding(log_entry.id, request.log_text)
+
     return {
         "id": log_entry.id,
         "explanation": result.get("explanation", ""),
@@ -61,6 +67,8 @@ def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
         "fix_suggestions": result.get("fix_suggestions", []),
         "fix_code": result.get("fix_code", ""),
         "fix_confidence": result.get("fix_confidence", 0),
+        "is_personalized": result.get("is_personalized", False),
+        "similar_logs": result.get("similar_logs", []),
     }
 
 class ChatMessage(BaseModel):

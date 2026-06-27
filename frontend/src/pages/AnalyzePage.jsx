@@ -35,6 +35,7 @@ export default function AnalyzePage() {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/analyze`, {
+      // const response = await axios.post('http://localhost:8000/api/analyze', {
         log_text: logText,
         user_id: user.id,
       })

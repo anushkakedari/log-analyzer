@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, DateTime, Text, Integer
 from sqlalchemy.sql import func
 from database import Base
 import uuid
+from pgvector.sqlalchemy import Vector
 
 class User(Base):
     __tablename__ = "users"
@@ -26,3 +27,4 @@ class LogAnalysis(Base):
     fix_suggestions = Column(Text)
     platform = Column(String)        # Python, Node.js, Docker etc.
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    embedding = Column(Vector(384), nullable=True)

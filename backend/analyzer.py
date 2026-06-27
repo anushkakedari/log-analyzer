@@ -2,14 +2,40 @@ from groq import Groq
 import os
 import json
 from dotenv import load_dotenv
+from rag import retrieve_similar_logs
 
 load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def analyze_log(log_text: str) -> dict:
-    prompt = f"""You are an expert software engineer and debugging assistant.
+def analyze_log(log_text: str, user_id: str = None) -> dict:
 
+    # Step 1 - retrieval
+    similar_logs = []
+    if user_id:
+        similar_logs = retrieve_similar_logs(log_text, user_id)
+
+
+    # step 2 - augmentation
+    context = ""
+    if similar_logs:
+        context = """
+IMPORTANT CONTEXT - This user has seen similar errors before:
+"""
+    for i, log in enumerate(similar_logs, 1):
+        context += f"""
+Similar Error {i} (Similarity: {log.get('similarity', 0):.0%}):
+- Error: {log.get('raw_log', '')[:100]}
+- What it was: {log.get('explanation', '')}
+- Classification: {log.get('classification', '')}
+- Platform: {log.get('platform', '')}
+- Previous fix: {log.get('fix_suggestions', '')}
+"""
+    context += "\nUse this context to give more personalized advice.\n"
+
+    # STEP 3 — GENERATION with augmented prompt
+    prompt = f"""You are an expert software engineer and debugging assistant.
+{context}
 Analyze the following log, error, or stack trace and respond ONLY with a valid JSON object. No explanation outside the JSON. No markdown. No backticks.
 
 Log to analyze:
@@ -28,7 +54,8 @@ Respond with this exact JSON structure:
     "Third actionable step"
   ],
   "fix_code": "Optional: a short code snippet that fixes the issue, or empty string if not applicable",
-  "fix_confidence": 85
+  "fix_confidence": 85,
+  "is_personalized": {str(bool(similar_logs)).lower()}
 }}
 
 Rules:
@@ -37,6 +64,7 @@ Rules:
 - fix_code should be in the correct language matching the log
 - If the log is just informational (INFO), set severity to Low
 - Be specific and practical in fix_suggestions
+- If context from similar errors is provided, reference it in your explanation
 - Return ONLY the JSON object, nothing else
 """
 
@@ -56,5 +84,6 @@ Rules:
         response_text = response_text.strip()
 
     result = json.loads(response_text)
+    result['similar_logs'] = similar_logs
     return result
 

@@ -3,9 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 import models
 from routers import router
+import traceback
 
 app = FastAPI(title="Log Analyzer API", version="1.0.0")
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    print(f"GLOBAL ERROR: {traceback.format_exc()}")
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
+    
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

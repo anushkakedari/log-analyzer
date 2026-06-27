@@ -85,6 +85,32 @@ export default function AnalysisResult({ result }) {
           </pre>
         </div>
       )}
-    </div>
+
+
+
+    {result.is_personalized && (
+      <span className="px-3 py-1 rounded-full text-sm font-medium border bg-green-500/20 text-green-400 border-green-500/30">
+        🧠 Personalized
+      </span>
+    )}
+
+    {result.similar_logs && result.similar_logs.length > 0 && (
+      <div className="bg-[#1a1a2e] rounded-xl p-5 border border-green-500/30 mt-4">
+        <h3 className="text-green-400 font-semibold mb-3">🔍 Similar Past Errors Found</h3>
+          {result.similar_logs.map((log, index) => (
+            <div key={index} className="mb-3 pb-3 border-b border-[#2a2a3e] last:border-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-green-400 text-xs font-bold">
+                  {Math.round(log.similarity * 100)}% match
+                </span>
+                <span className="text-gray-500 text-xs">{log.platform}</span>
+              </div>
+              <p className="text-gray-300 text-xs font-mono truncate">{log.raw_log}</p>
+              <p className="text-gray-500 text-xs mt-1">{log.explanation}</p>
+            </div>
+          ))}
+        </div>
+    )}
+  </div> 
   )
 }
