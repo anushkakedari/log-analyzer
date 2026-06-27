@@ -40,15 +40,11 @@ def retrieve_similar_logs(log_text: str, user_id: str, threshold: float = 0.7, l
 def store_embedding(log_id: str, log_text: str):
     """Generate and store embedding for a log analysis"""
     try:
-        print(f"RAG: Starting embedding for {log_id[:8]}")
+    
         embedding = generate_embedding(log_text)
-        print(f"RAG: Embedding generated, size: {len(embedding)}")
-
-        result = supabase.table('log_analyses').update({
+        supabase.table('log_analyses').update({
             'embedding': embedding
         }).eq('id', log_id).execute()
-
-        print(f"RAG: Supabase response: {result}")
-
+        print(f"✅ Embedding stored for {log_id[:8]}...")
     except Exception as e:
-        print(f"RAG: FAILED to store embedding: {type(e).__name__}: {e}")
+        print(f"Failed to store embedding: {e}")
