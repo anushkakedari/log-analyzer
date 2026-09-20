@@ -1,3 +1,8 @@
+# Secrets / local environment files (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+
 # Python
 backend/venv/
 backend/__pycache__/
