@@ -6,6 +6,13 @@ from models import LogAnalysis
 from analyzer import analyze_log
 import json
 from rag import store_embedding
+import logging
+
+from app.core.config import get_settings
+from app.core.request_id import get_request_id
+
+logger = logging.getLogger(__name__)
+settings = get_settings()
 
 router = APIRouter()
 
@@ -36,8 +43,19 @@ def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
 
     try:
         result = analyze_log(request.log_text, request.user_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
+    except Exception:
+        request_id = get_request_id()
+
+        logger.exception(
+            "AI analysis failed | request_id=%s",
+            request_id,
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="AI analysis failed. Please try again.",
+            headers={"X-Request-ID": request_id} if request_id else None,
+        )
 
     # Save to database
     log_entry = LogAnalysis(
@@ -86,7 +104,7 @@ def chat(request: ChatRequest):
     from groq import Groq
     import os
 
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    client = Groq(api_key=settings.groq_api_key)
 
     # Build conversation history for Groq
     system_prompt = f"""You are an expert software engineer helping a developer understand and fix a log/error.
