@@ -1,12 +1,11 @@
 from groq import Groq
-import os
 import json
-from dotenv import load_dotenv
+
+from app.core.config import get_settings
 from rag import retrieve_similar_logs
 
-load_dotenv()
-
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+settings = get_settings()
+client = Groq(api_key=settings.groq_api_key)
 
 def analyze_log(log_text: str, user_id: str = None) -> dict:
 
